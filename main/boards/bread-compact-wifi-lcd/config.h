@@ -1,6 +1,7 @@
 #ifndef _BOARD_CONFIG_H_
 #define _BOARD_CONFIG_H_
 
+// Customized pinout: Pure Left-Side J1 Breadboard Wiring for BIAN Avatar
 #include <driver/gpio.h>
 
 #define AUDIO_INPUT_SAMPLE_RATE  16000
