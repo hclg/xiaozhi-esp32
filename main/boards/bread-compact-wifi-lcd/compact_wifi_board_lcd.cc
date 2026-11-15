@@ -151,6 +151,11 @@ public:
         
     }
 
+    virtual void SetPowerSaveLevel(PowerSaveLevel level) override {
+        // 彻底禁用 Wi-Fi 节能休眠，全时高性能保持连接，解决光猫空闲超时踢下线问题
+        WifiBoard::SetPowerSaveLevel(PowerSaveLevel::PERFORMANCE);
+    }
+
     virtual Led* GetLed() override {
         static SingleLed led(BUILTIN_LED_GPIO);
         return &led;
