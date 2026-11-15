@@ -24,7 +24,7 @@
 static const char *TAG = "WifiBoard";
 
 // Connection timeout in seconds
-static constexpr int CONNECT_TIMEOUT_SEC = 60;
+static constexpr int CONNECT_TIMEOUT_SEC = 180;
 
 WifiBoard::WifiBoard() {
     // Create connection timeout timer
@@ -68,6 +68,7 @@ void WifiBoard::StartNetwork() {
         config.station_hostname = hostname;
     }
     wifi_manager.Initialize(config);
+    SetPowerSaveLevel(PowerSaveLevel::PERFORMANCE);
 
     // Set unified event callback - forward to NetworkEvent with SSID data
     wifi_manager.SetEventCallback([this](WifiEvent event, const std::string& data) {
@@ -161,6 +162,16 @@ void WifiBoard::SetNetworkEventCallback(NetworkEventCallback callback) {
 
 void WifiBoard::OnWifiConnectTimeout(void* arg) {
     auto* board = static_cast<WifiBoard*>(arg);
+    auto& ssid_manager = SsidManager::GetInstance();
+    if (!ssid_manager.GetSsidList().empty()) {
+        ESP_LOGW(TAG, "WiFi connection timeout, retrying station mode...");
+        WifiManager::GetInstance().StopStation();
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        WifiManager::GetInstance().StartStation();
+        board->SetPowerSaveLevel(PowerSaveLevel::PERFORMANCE);
+        esp_timer_start_once(board->connect_timer_, CONNECT_TIMEOUT_SEC * 1000000ULL);
+        return;
+    }
     ESP_LOGW(TAG, "WiFi connection timeout, entering config mode");
 
     WifiManager::GetInstance().StopStation();
