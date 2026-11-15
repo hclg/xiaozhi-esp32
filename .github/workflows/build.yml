@@ -95,7 +95,11 @@ jobs:
           if [[ "$BUILD_OPTIONS_JSON" != "null" && -n "$BUILD_OPTIONS_JSON" ]]; then
             OPTIONS+=(--build-options-json "$BUILD_OPTIONS_JSON")
           fi
-          python scripts/build.py "$BOARD" --name "$VARIANT" --language zh-CN --wake-word nihaoxiaozhi "${OPTIONS[@]}"
+          WAKE_WORD="nihaoxiaozhi"
+          if [[ "$VARIANT" == "bread-compact-wifi-lcd" ]]; then
+            WAKE_WORD="nihaobian"
+          fi
+          python scripts/build.py "$BOARD" --name "$VARIANT" --language zh-CN --wake-word "$WAKE_WORD" "${OPTIONS[@]}"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7

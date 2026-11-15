@@ -153,6 +153,7 @@ public:
 
     virtual void SetPowerSaveLevel(PowerSaveLevel level) override {
         // 彻底禁用 Wi-Fi 节能休眠，全时高性能保持连接，解决光猫空闲超时踢下线问题
+        // 自定义唤醒词：你好彼岸
         WifiBoard::SetPowerSaveLevel(PowerSaveLevel::PERFORMANCE);
     }
 

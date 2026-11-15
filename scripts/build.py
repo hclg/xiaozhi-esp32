@@ -339,6 +339,20 @@ def _wake_word_sdkconfig_options(
         )
     elif normalized == "hiesp":
         normalized = "wn9s_hiesp" if target in _LITE_WAKE_WORD_TARGETS else "wn9_hiesp"
+    elif normalized in ("nihaobian", "custom"):
+        if target not in _AFE_WAKE_WORD_TARGETS:
+            raise ValueError(f"Custom wake word requires AFE support, not supported on {target}")
+        options = [
+            "CONFIG_WAKE_WORD_DISABLED=n",
+            "CONFIG_USE_ESP_WAKE_WORD=n",
+            "CONFIG_USE_AFE_WAKE_WORD=n",
+            "CONFIG_USE_CUSTOM_WAKE_WORD=y",
+            'CONFIG_CUSTOM_WAKE_WORD="ni hao bi an"',
+            'CONFIG_CUSTOM_WAKE_WORD_DISPLAY="你好彼岸"',
+            "CONFIG_CUSTOM_WAKE_WORD_THRESHOLD=25",
+            "CONFIG_SR_MN_CN_MULTINET7_QUANT=y",
+        ]
+        return "nihaobian", options, ["CONFIG_USE_CUSTOM_WAKE_WORD"]
 
     # Every build starts from a fresh sdkconfig. Models default to disabled in
     # ESP-SR; board and target presets must not select a particular model.
