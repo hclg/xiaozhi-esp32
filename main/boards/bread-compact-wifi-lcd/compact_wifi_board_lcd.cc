@@ -63,7 +63,6 @@ class CompactWifiBoardLCD : public WifiBoard {
 private:
  
     Button boot_button_;
-    Button touch_button_;
     LcdDisplay* display_;
 
     void InitializeSpi() {
@@ -132,14 +131,6 @@ private:
             }
             app.ToggleChatState();
         });
-        touch_button_.OnClick([this]() {
-            auto& app = Application::GetInstance();
-            if (app.GetDeviceState() == kDeviceStateStarting) {
-                EnterWifiConfigMode();
-                return;
-            }
-            app.ToggleChatState();
-        });
     }
 
     // 物联网初始化，添加对 AI 可见设备
@@ -149,8 +140,7 @@ private:
 
 public:
     CompactWifiBoardLCD() :
-        boot_button_(BOOT_BUTTON_GPIO),
-        touch_button_(TOUCH_BUTTON_GPIO) {
+        boot_button_(BOOT_BUTTON_GPIO) {
         InitializeSpi();
         InitializeLcdDisplay();
         InitializeButtons();
